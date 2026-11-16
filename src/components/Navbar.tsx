@@ -261,6 +261,45 @@ export function Navbar() {
         }`}
       >
         <nav aria-label="Mobile navigation" className="flex flex-col gap-3">
+          {/* Mobile Language Switcher */}
+          <div
+            role="group"
+            aria-label={copy.nav.langSwitchAria}
+            className="mb-2 flex items-center justify-between rounded-2xl border border-white/20 bg-white/10 p-2"
+          >
+            <span className="pl-3 text-xs font-medium text-[#F6F4EF]/80">
+              {lang === 'bn' ? 'ভাষা নির্বাচন করুন' : 'Select Language'}
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                lang="bn"
+                onClick={() => setLang('bn')}
+                aria-pressed={lang === 'bn'}
+                className={`cursor-pointer whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+                  lang === 'bn'
+                    ? 'bg-[#F6F4EF] text-[#171A21] shadow-sm'
+                    : 'text-[#F6F4EF]/70 hover:text-[#F6F4EF]'
+                }`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                lang="en"
+                onClick={() => setLang('en')}
+                aria-pressed={lang === 'en'}
+                className={`cursor-pointer whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+                  lang === 'en'
+                    ? 'bg-[#F6F4EF] text-[#171A21] shadow-sm'
+                    : 'text-[#F6F4EF]/70 hover:text-[#F6F4EF]'
+                }`}
+              >
+                English
+              </button>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={() =>

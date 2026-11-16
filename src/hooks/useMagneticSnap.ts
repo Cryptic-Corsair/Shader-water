@@ -45,9 +45,9 @@ export function useMagneticSnap(
 
       const snap = new Snap(lenis, {
         type: 'proximity',
-        distanceThreshold: '15%',
-        debounce: 240,
-        duration: 0.95,
+        distanceThreshold: '5%',
+        debounce: 350,
+        duration: 0.45,
       });
 
       const stations = Array.from(

@@ -1,246 +1,149 @@
-import { useRef, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Feather, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import { AUTHOR_BIO_BEATS, AUTHOR_PROFILE } from '../../data/authorProfile';
+import { AUTHOR_BIO_BEATS } from '../../data/authorProfile';
 import { getUiCopy } from '../../data/uiCopy';
-import {
-  ScrollTrigger,
-  gsap,
-  prefersReducedMotion,
-  useGSAP,
-  useMagnetic,
-} from '../../lib/motion';
 import { TransitionLink } from '../PageTransition';
-import { TideContourCanvas } from '../art/TideContourCanvas';
-
-function BeatMotifPlate({ index }: { index: number }) {
-  if (index === 0) {
-    return (
-      <svg viewBox="0 0 240 84" fill="none" className="h-16 w-48">
-        <path
-          d="M 10 62 Q 70 18, 130 46 T 230 28"
-          stroke="rgba(223, 188, 145, 0.58)"
-          strokeWidth="1"
-        />
-        <line
-          x1="120"
-          y1="8"
-          x2="120"
-          y2="76"
-          stroke="rgba(246, 244, 239, 0.34)"
-          strokeWidth="0.8"
-          strokeDasharray="3 5"
-        />
-        <circle cx="120" cy="44" r="3" fill="#DFBC91" fillOpacity="0.8" />
-      </svg>
-    );
-  }
-  if (index === 1) {
-    return (
-      <svg viewBox="0 0 240 84" fill="none" className="h-16 w-48">
-        <circle
-          cx="120"
-          cy="42"
-          r="30"
-          stroke="rgba(246, 244, 239, 0.36)"
-          strokeWidth="0.9"
-        />
-        <circle
-          cx="120"
-          cy="42"
-          r="19"
-          stroke="rgba(223, 188, 145, 0.5)"
-          strokeWidth="0.8"
-          strokeDasharray="2 5"
-        />
-        <line
-          x1="120"
-          y1="42"
-          x2="142"
-          y2="24"
-          stroke="#DFBC91"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 240 84" fill="none" className="h-16 w-48">
-      <path
-        d="M 14 52 C 62 38, 96 66, 148 36 C 178 18, 206 28, 228 20"
-        stroke="rgba(246, 244, 239, 0.52)"
-        strokeWidth="1"
-      />
-      <path
-        d="M 14 64 C 66 52, 102 74, 152 48 C 180 34, 206 42, 228 36"
-        stroke="rgba(223, 188, 145, 0.45)"
-        strokeWidth="0.85"
-      />
-    </svg>
-  );
-}
 
 export function StorySection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const archiveBtnRef = useRef<HTMLAnchorElement>(null);
-  const [activeBeat, setActiveBeat] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
   const { lang } = useLanguage();
   const copy = getUiCopy(lang).story;
+  const [activeBeatIndex, setActiveBeatIndex] = useState(0);
 
-  useMagnetic(archiveBtnRef, 0.2);
-
-  useGSAP(
-    () => {
-      const section = sectionRef.current;
-      if (!section) return;
-
-      const reduced = prefersReducedMotion();
-
-      const progressTrigger = ScrollTrigger.create({
-        trigger: section,
-        start: 'top 72%',
-        end: 'bottom 38%',
-        onUpdate: (self) => {
-          setScrollProgress(self.progress);
-        },
-      });
-
-      const beatEls = Array.from(
-        section.querySelectorAll<HTMLElement>('[data-story-beat]')
-      );
-      beatEls.forEach((beatEl, idx) => {
-        ScrollTrigger.create({
-          trigger: beatEl,
-          start: 'top 62%',
-          end: 'bottom 38%',
-          onEnter: () => setActiveBeat(idx),
-          onEnterBack: () => setActiveBeat(idx),
-        });
-      });
-
-      const motifPlates = Array.from(
-        section.querySelectorAll<HTMLElement>('[data-story-motif]')
-      );
-      if (!reduced) {
-        motifPlates.forEach((plate) => {
-          gsap.fromTo(
-            plate,
-            { scale: 0.94 },
-            {
-              scale: 1.04,
-              ease: 'none',
-              immediateRender: false,
-              scrollTrigger: {
-                trigger: plate,
-                start: 'top 88%',
-                end: 'bottom 30%',
-                scrub: 0.75,
-              },
-            }
-          );
-        });
-      }
-
-      ScrollTrigger.refresh();
-      return () => {
-        progressTrigger.kill();
-      };
-    },
-    { scope: sectionRef, dependencies: [lang], revertOnUpdate: true }
-  );
-
-  const currentBeat = AUTHOR_BIO_BEATS[activeBeat] ?? AUTHOR_BIO_BEATS[0];
+  const activeBeat = AUTHOR_BIO_BEATS[activeBeatIndex] ?? AUTHOR_BIO_BEATS[0];
 
   return (
     <section
       id="chapter-story"
-      ref={sectionRef}
-      data-bg-stage="3"
+      data-bg-stage="4"
       data-snap-station
-      aria-label="Practice and notebook biography"
-      className="relative min-h-[140svh] w-full overflow-x-clip py-24 text-[#F6F4EF] md:py-36"
+      aria-label="Notebook Genesis & Poet Story"
+      className="relative flex min-h-[110svh] w-full items-center overflow-hidden py-24 text-[#F6F4EF] md:py-36"
     >
-      <div className="mx-auto max-w-[82rem] px-6 md:px-10">
-        <div className="grid gap-14 lg:grid-cols-12 lg:items-start lg:gap-16">
-          {/* Left Sticky Column: Canvas 2D Tidal Horizon & Wave Contour Sketchpad */}
-          <div className="lg:col-span-5 lg:sticky lg:top-[18vh]">
-            <p className="text-xs font-medium text-[#B2C2D4] uppercase">
-              {copy.eyebrow}
-            </p>
-            <h2 className="font-display display-luminous mt-3 text-[clamp(2.2rem,3.9vw,3.35rem)] leading-[1.18] font-semibold">
-              {copy.heading}
-            </h2>
-
-            <div className="mt-8">
-              <TideContourCanvas
-                scrollProgress={scrollProgress}
-                activePhraseIndex={activeBeat}
-              />
-
-              <div className="mt-4 flex items-center justify-between border-t border-white/16 pt-3 text-xs">
-                <span className="font-medium text-[#DFBC91]">
-                  {currentBeat.label[lang]}
-                </span>
-                <span className="text-[#F6F4EF]/70">
-                  {currentBeat.motifTitle[lang]}
-                </span>
-              </div>
-            </div>
+      <div className="relative z-10 mx-auto w-full max-w-[82rem] px-6 md:px-10">
+        {/* Section Header */}
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#DFBC91]">
+            <Feather className="h-3 w-3" />
+            <span>{copy.eyebrow}</span>
           </div>
+          <h2
+            className={`font-display display-luminous mt-3 text-3xl font-semibold md:text-5xl ${
+              lang === 'bn' ? 'font-bn-display' : ''
+            }`}
+          >
+            {copy.heading}
+          </h2>
+          <p className="mt-4 text-sm leading-[1.8] text-[#F6F4EF]/75 md:text-base">
+            {lang === 'bn'
+              ? '২০২৩ সালের শীত থেকে ২০২৪-এর বসন্ত অবধি ব্যক্তিগত অনুভবের খাতা থেকে জন্ম নেওয়া পঙ্‌ক্তিমালা।'
+              : 'Manuscript notes spanning winter 2023 to spring 2024, preserved in unembellished verse.'}
+          </p>
+        </div>
 
-          {/* Right Scrolling Column: Open Borderless Editorial Biography (3 Spacious Beats) */}
-          <div className="space-y-16 lg:col-span-6 lg:col-start-7 lg:pt-6 md:space-y-24">
-            {AUTHOR_BIO_BEATS.map((beat, idx) => (
-              <article
-                key={beat.id}
-                data-story-beat={idx}
-                className="space-y-7"
-              >
-                <p className="text-xs font-medium text-[#DFBC91] uppercase">
-                  {beat.label[lang]}
-                </p>
-
-                <p
-                  className={`max-w-[58ch] text-base leading-[1.86] text-[#F6F4EF]/88 md:text-[1.08rem] ${
-                    idx === 0 && lang === 'en'
-                      ? 'editorial-drop-cap first-letter:float-left first-letter:mr-3.5 first-letter:mt-1 first-letter:text-[4.25rem] first-letter:leading-[0.82] first-letter:text-[#DFBC91]'
-                      : ''
+        {/* Multi-Beat Narrative Interactive Layout */}
+        <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-start">
+          {/* Left Column (5 cols): Story Beats Selector */}
+          <div className="flex flex-col gap-3 lg:col-span-5">
+            {AUTHOR_BIO_BEATS.map((beat, idx) => {
+              const isActive = idx === activeBeatIndex;
+              return (
+                <button
+                  key={beat.id}
+                  type="button"
+                  onClick={() => setActiveBeatIndex(idx)}
+                  className={`text-left rounded-2xl border p-5 transition-all duration-300 ${
+                    isActive
+                      ? 'border-[#DFBC91]/60 bg-[#2C3442]/90 shadow-[0_12px_32px_rgba(15,18,24,0.3)]'
+                      : 'border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
                   }`}
                 >
-                  {beat.paragraph[lang]}
-                </p>
-
-                {/* Floating archival field-note callout & zoom-on-scroll SVG motif plate */}
-                <div className="flex flex-col gap-5 border-t border-white/15 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="font-editorial-serif max-w-[34ch] text-base leading-[1.7] text-[#B2C2D4] md:text-lg">
-                    {beat.callout[lang]}
-                  </p>
-                  <div
-                    data-story-motif
-                    className="shrink-0 will-change-transform"
-                  >
-                    <BeatMotifPlate index={idx} />
+                  <div className="flex items-center justify-between text-xs font-medium">
+                    <span className={isActive ? 'text-[#DFBC91]' : 'text-[#F6F4EF]/60'}>
+                      {beat.label[lang]}
+                    </span>
+                    <span className="text-[11px] text-[#F6F4EF]/50">
+                      {beat.motifTitle[lang]}
+                    </span>
                   </div>
-                </div>
-              </article>
-            ))}
+                  <h4 className="mt-2 text-base font-semibold text-[#F6F4EF]">
+                    {beat.motifTitle[lang]}
+                  </h4>
+                  <p className="mt-1 line-clamp-2 text-xs text-[#F6F4EF]/70">
+                    {beat.paragraph[lang]}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
 
-            <p className="border-t border-white/15 pt-5 text-xs leading-[1.8] text-[#B2C2D4]/85">
-              {AUTHOR_PROFILE.bioPlaceholderNote[lang]}
-            </p>
+          {/* Right Column (7 cols): Tactile Manuscript Ledger Detail */}
+          <div className="relative rounded-3xl border border-white/20 bg-gradient-to-br from-[#262E3B]/90 to-[#1B212B]/95 p-8 shadow-[0_24px_64px_rgba(15,18,24,0.35)] backdrop-blur-xl lg:col-span-7 md:p-12">
+            {/* Subtle Ruled Manuscript Lines */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(transparent, transparent 31px, rgba(246,244,239,0.3) 31px, rgba(246,244,239,0.3) 32px)',
+              }}
+            />
 
-            <div className="pt-2">
-              <TransitionLink
-                ref={archiveBtnRef}
-                to="/poems"
-                className="glass-light inline-flex items-center gap-2.5 whitespace-nowrap shrink-0 rounded-full px-6 py-3 text-xs font-semibold text-[#171A21] shadow-[0_12px_32px_rgba(24,28,36,0.16)] transition-all duration-200 hover:bg-white/88 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DFBC91]"
+            <div className="relative z-10">
+              {/* Beat Index Marker */}
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-mono text-[#DFBC91] font-semibold">
+                  {activeBeat.label[lang]}
+                </span>
+                <span className="text-[#F6F4EF]/60">
+                  {lang === 'bn' ? 'পাণ্ডুলিপি খসড়া' : 'Archival Manuscript'}
+                </span>
+              </div>
+
+              {/* Beat Heading */}
+              <h3
+                className={`mt-4 text-2xl font-semibold md:text-3xl text-[#F6F4EF] ${
+                  lang === 'bn' ? 'font-bn-display' : 'font-display'
+                }`}
               >
-                <span>{copy.cta}</span>
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </TransitionLink>
+                {activeBeat.motifTitle[lang]}
+              </h3>
+
+              {/* Full Paragraph */}
+              <p className="mt-5 text-base leading-[1.9] text-[#F6F4EF]/85 md:text-[1.05rem]">
+                {activeBeat.paragraph[lang]}
+              </p>
+
+              {/* Authentic Callout / Quote */}
+              <div className="my-8 rounded-2xl border border-white/12 bg-black/25 p-6 backdrop-blur-sm">
+                <div className="flex items-center gap-2 text-xs font-medium text-[#DFBC91]">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>{lang === 'bn' ? 'মূল উচ্চারণ' : 'Key Note'}</span>
+                </div>
+                <p
+                  lang="bn"
+                  className="font-bn-verse mt-3 text-lg leading-[1.8] text-[#F6F4EF] md:text-xl"
+                >
+                  {activeBeat.callout[lang]}
+                </p>
+              </div>
+
+              {/* Bottom CTA to View All Poems */}
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-xs text-[#F6F4EF]/60">
+                  {lang === 'bn'
+                    ? 'অনন্যা হাসানের ১০টি কবিতা পড়তে প্রবেশ করুন'
+                    : 'Read all 10 poems in the collection'}
+                </span>
+
+                <TransitionLink
+                  to="/poems"
+                  className="glass-light inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold text-[#171A21] transition-all duration-200 hover:bg-white/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DFBC91]"
+                >
+                  <span>{copy.cta}</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </TransitionLink>
+              </div>
             </div>
           </div>
         </div>

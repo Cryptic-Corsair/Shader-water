@@ -41,6 +41,8 @@
 
   /* Strict Bengali Script Rules: never clip conjuncts (যুক্তাক্ষর) or vowel marks */
   :lang(bn),
+  [data-lang="bn"],
+  .site-lang-bn,
   .font-bn-display,
   .font-bn-verse,
   .font-bn-ui {
@@ -63,13 +65,18 @@
     line-height: 1.85;
   }
 
-  html:lang(bn) body {
+  html:lang(bn) body,
+  html[data-lang="bn"] body,
+  body[data-lang="bn"],
+  body.site-lang-bn {
     font-family: var(--font-bn-ui);
     line-height: 1.85;
     letter-spacing: 0;
   }
 
-  html:lang(bn) .font-display {
+  html:lang(bn) .font-display,
+  html[data-lang="bn"] .font-display,
+  .site-lang-bn .font-display {
     font-family: var(--font-bn-display);
     letter-spacing: 0 !important;
     line-height: 1.32;
@@ -77,7 +84,13 @@
 
   html:lang(bn) h2,
   html:lang(bn) h3,
-  html:lang(bn) .font-editorial-serif {
+  html:lang(bn) .font-editorial-serif,
+  html[data-lang="bn"] h2,
+  html[data-lang="bn"] h3,
+  html[data-lang="bn"] .font-editorial-serif,
+  .site-lang-bn h2,
+  .site-lang-bn h3,
+  .site-lang-bn .font-editorial-serif {
     font-family: var(--font-bn-display);
     letter-spacing: 0 !important;
   }
